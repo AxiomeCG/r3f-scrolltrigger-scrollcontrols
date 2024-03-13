@@ -1,47 +1,61 @@
-import { Canvas, useFrame } from "@react-three/fiber";
+import { Canvas } from "@react-three/fiber";
 import "./App.scss";
-import { OrbitControls, Sphere } from "@react-three/drei";
-import vertexShader from "./shaders/example/vertex.glsl"
-import fragmentShader from "./shaders/example/fragment.glsl"
-import { useMemo, useRef } from "react";
-import { ShaderMaterial } from "three";
+import { Box, Scroll, ScrollControls, Sphere, useScroll } from "@react-three/drei";
+import { useGSAP } from "@gsap/react";
+import ScrollTrigger from "gsap/ScrollTrigger";
+import gsap from "gsap";
 
-const Scene = () => {
-  const sphereRef = useRef<any>(null!);
-  const uniforms = useMemo(() => ({
-    uTime: {
-      value: 0.0
-    },
-    // Add any other attributes here
-  }), [])
+gsap.registerPlugin(useGSAP);
+gsap.registerPlugin(ScrollTrigger);
 
-  useFrame((state) => {
-    const {clock} = state;
 
-    sphereRef.current.material.uniforms.uTime.value = clock.elapsedTime;
-  });
+function HtmlPart() {
+  const {fixed} = useScroll();
 
-  return <>
-    <Sphere ref={sphereRef}>
-      <shaderMaterial
-        vertexShader={vertexShader}
-        fragmentShader={fragmentShader}
-        uniforms={uniforms}
-      />
-    </Sphere>
-  </>
+  useGSAP(() => {
+    const boxes = gsap.utils.toArray('.box') as HTMLElement[];
+    boxes.forEach(box => {
+      gsap.to(box, {
+        x: 300,
+        rotation: 360,
+        scrollTrigger: {
+          trigger: box,
+          scrub: true,
+          scroller: fixed.parentElement,
+        }
+      })
+    });
+  }, );
+  return <div style={{marginBottom: "100vh"}}>
+    <h2>Scroll down</h2>
+    <div className="box"></div>
+
+    <div className="box"></div>
+
+    <div className="box"></div>
+  </div>;
 }
-
 
 function App() {
   return (
-    <>
-      <Canvas>
-        <Scene/>
-        <pointLight position={[0, 5, 0]} intensity={1} color="white"/>
-        <OrbitControls/>
-      </Canvas>
-    </>
+    <Canvas>
+      <directionalLight position={[0, 0, 5]} intensity={1}/>
+      <ambientLight intensity={0.5}/>
+      <ScrollControls pages={4}>
+        <Scroll html>
+          <HtmlPart/>
+        </Scroll>
+
+        <Scroll>
+          <Sphere>
+            <meshStandardMaterial color="hotpink"/>
+          </Sphere>
+          <Box position={[0, -3, 0]}>
+            <meshStandardMaterial color="cyan"/>
+          </Box>
+        </Scroll>
+      </ScrollControls>
+    </Canvas>
   );
 }
 

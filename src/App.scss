@@ -1,0 +1,21 @@
+@import url('https://fonts.googleapis.com/css?family=Signika+Negative:300,400&display=swap');
+
+body {
+  font-family: "Signika Negative", sans-serif;
+  font-weight: 300;
+  margin: 0;
+  padding: 0 20px;
+}
+
+h2, .box {
+  margin-bottom: 100vh;
+}
+h2 {
+  text-align: center;
+}
+
+.box {
+  background-color: green;
+  width: 100px;
+  height: 100px;
+}
