@@ -4,6 +4,7 @@ import { Box, Scroll, ScrollControls, Sphere, useScroll } from "@react-three/dre
 import { useGSAP } from "@gsap/react";
 import ScrollTrigger from "gsap/ScrollTrigger";
 import gsap from "gsap";
+import { useRef } from "react";
 
 gsap.registerPlugin(useGSAP);
 gsap.registerPlugin(ScrollTrigger);
@@ -11,6 +12,7 @@ gsap.registerPlugin(ScrollTrigger);
 
 function HtmlPart() {
   const {fixed} = useScroll();
+  const scopeRef = useRef<HTMLDivElement>(null!);
 
   useGSAP(() => {
     const boxes = gsap.utils.toArray('.box') as HTMLElement[];
@@ -25,8 +27,8 @@ function HtmlPart() {
         }
       })
     });
-  }, );
-  return <div style={{marginBottom: "100vh"}}>
+  },  { scope: scopeRef });
+  return <div ref={scopeRef} style={{marginBottom: "100vh"}}>
     <h2>Scroll down</h2>
     <div className="box"></div>
 
